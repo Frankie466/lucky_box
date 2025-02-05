@@ -5,6 +5,7 @@ from .views.register import register_view
 from .views.password_reset import password_reset_view, password_reset_done_view, password_reset_confirm_view
 from .views.lucky_box import lucky_box
 from .views.mpesa import mpesa_callback_view  # Import the mpesa_callback_view
+
  
 app_name = 'store'
 
@@ -19,3 +20,4 @@ urlpatterns = [
     path('lucky-box/', lucky_box, name='lucky_box'),
     path('mpesa-callback/', mpesa_callback_view, name='mpesa_callback'),  # Add this line for M-Pesa callback
 ]
+

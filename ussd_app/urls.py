@@ -20,7 +20,7 @@ urlpatterns = [
     path('password_reset_done/', password_reset_done_view, name='password_reset_done'),
     path('password_reset_confirm/<uidb64>/<token>/', password_reset_confirm_view, name='password_reset_confirm'),
     path('lucky-box/', lucky_box, name='lucky_box'),
-]
 
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

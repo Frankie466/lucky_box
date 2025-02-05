@@ -16,8 +16,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     ".vercel.app",
-    "now.sh",
-    ".payments-production-a843.up.railway.app",  # Allow Railway hosting
+    ".now.sh",
+    
 ]
 
 
@@ -91,8 +91,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+STATICFILES_DIRS =[os.path.join(BASE_DIR,'static')]
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles_build','static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -113,4 +113,7 @@ BUSINESS_SHORTCODE = os.getenv('BUSINESS_SHORTCODE')
 MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
 CALLBACK_URL = os.getenv('CALLBACK_URL')
 
-CSRF_TRUSTED_ORIGINS = ['https://012f-105-161-169-49.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = [    
+    ".railway.app",
+    ".vercel.app"
+]
