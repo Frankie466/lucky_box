@@ -113,7 +113,7 @@ BUSINESS_SHORTCODE = os.getenv('BUSINESS_SHORTCODE')
 MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
 CALLBACK_URL = os.getenv('CALLBACK_URL')
 
-CSRF_TRUSTED_ORIGINS = [    
-    ".railway.app",
-    ".vercel.app"
+CSRF_TRUSTED_ORIGINS = [
+    
+    "http://localhost:8000",
 ]
