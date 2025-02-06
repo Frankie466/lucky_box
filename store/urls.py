@@ -6,6 +6,10 @@ from .views.password_reset import password_reset_view, password_reset_done_view,
 from .views.lucky_box import lucky_box
 from .views.mpesa import mpesa_callback_view  # Import the mpesa_callback_view
 
+
+from django.conf import settings
+from django.conf.urls.static import static
+
  
 app_name = 'store'
 
@@ -21,3 +25,5 @@ urlpatterns = [
     path('mpesa-callback/', mpesa_callback_view, name='mpesa_callback'),  # Add this line for M-Pesa callback
 ]
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
