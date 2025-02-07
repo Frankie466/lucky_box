@@ -19,5 +19,6 @@ urlpatterns = [
     path('password_reset_confirm/<uidb64>/<token>/', password_reset_confirm_view, name='password_reset_confirm'),
     path('lucky-box/', lucky_box, name='lucky_box'),
     path('mpesa-callback/', mpesa_callback_view, name='mpesa_callback'),  # Add this line for M-Pesa callback
+    
 ]
 

@@ -25,7 +25,7 @@ def lucky_box(request):
             return JsonResponse({'error': 'Invalid box choice. Choose between 1, 2, or 3.'}, status=400)
 
         callback_url = settings.CALLBACK_URL
-        amount = 1  # Payment amount can be modified as needed
+        amount = 42  # Payment amount can be modified as needed
 
         try:
             # Initiate the payment process
