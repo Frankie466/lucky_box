@@ -11,19 +11,24 @@ def register_view(request):
         password_confirm = request.POST.get('password_confirm')
         phone_number = request.POST.get('phone_number')
 
+        context = {
+            'username': username,
+            'phone_number': phone_number,
+        }
+
         # Check for empty fields
         if not username or not password or not password_confirm or not phone_number:
             messages.error(request, 'All fields are required.')
-            return render(request, 'store/register.html')
+            return render(request, 'store/register.html', context)
 
         if password != password_confirm:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'store/register.html')
+            return render(request, 'store/register.html', context)
 
         try:
             # Validate the password
             validate_password(password)
-            
+
             # Create the user
             user = CustomUser.objects.create_user(username=username, password=password, phone_number=phone_number)
             user.save()
@@ -35,5 +40,7 @@ def register_view(request):
             messages.error(request, 'Error creating user. Please try again.')
         except Exception as e:
             messages.error(request, f'Unexpected error: {str(e)}')
+
+        return render(request, 'store/register.html', context)
 
     return render(request, 'store/register.html')
