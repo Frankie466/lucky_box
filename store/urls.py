@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.home import home_view  # Import your home view
+from .views.home import home  # Import your home view
 from .views.login import login_view, logout_view
 from .views.register import register_view
 from .views.password_reset import password_reset_view, password_reset_done_view, password_reset_confirm_view
@@ -10,7 +10,7 @@ from .views.mpesa import mpesa_callback_view  # Import the mpesa_callback_view
 app_name = 'store'
 
 urlpatterns = [
-    path('', home_view, name='home'),  # Add this line for the home route
+    path('', home, name='home'),  # Add this line for the home route
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),

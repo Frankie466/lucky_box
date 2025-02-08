@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path , include
 from store.views.login import login_view, logout_view
 from store.views.register import register_view
 from store.views.password_reset import password_reset_view, password_reset_done_view, password_reset_confirm_view
@@ -12,6 +12,7 @@ app_name = 'store'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('store.urls', namespace='store')),
     path('', home, name='home'),  # Add home view
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
