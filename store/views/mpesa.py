@@ -138,23 +138,75 @@ def mpesa_callback_view(request):
 
 # 6. Trigger M-Pesa STK Push
 @csrf_exempt
-def stk_push_view(request):
-    """Trigger M-Pesa STK Push payment."""
+def mpesa_callback_view(request):
+    """Handle the M-Pesa callback response and update the reward system."""
     if request.method == 'POST':
         try:
-            phone_number = request.POST.get('phone_number')  
-            amount = float(request.POST.get('amount'))
-            callback_url = request.build_absolute_uri('/mpesa/callback/') 
+            callback_data = json.loads(request.body)
+            logger.info(f"Callback data received: {json.dumps(callback_data, indent=4)}")  # Log the response
 
-            if not phone_number or not amount:
-                return JsonResponse({"error": "Phone number and amount are required"}, status=400)
+            # Extract core response details
+            body = callback_data.get("Body", {})
+            stk_callback = body.get("stkCallback", {})
+            result_code = stk_callback.get("ResultCode")
+            result_description = stk_callback.get("ResultDesc", "No description provided")
+            merchant_request_id = stk_callback.get("MerchantRequestID", "")
+            checkout_request_id = stk_callback.get("CheckoutRequestID", "")
+            
+            # Extract CallbackMetadata items
+            callback_metadata = stk_callback.get("CallbackMetadata", {}).get("Item", [])
+            phone_number = ""
+            amount = 0
+            transaction_id = ""
 
-            # Initiate the payment
-            response = initiate_mpesa_payment(phone_number, amount, callback_url)
-            return JsonResponse(response)
+            for item in callback_metadata:
+                if item["Name"] == "MpesaReceiptNumber":
+                    transaction_id = item["Value"]
+                elif item["Name"] == "PhoneNumber":
+                    phone_number = str(item["Value"])
+                elif item["Name"] == "Amount":
+                    amount = float(item["Value"])
+
+            # Log extracted details
+            logger.info(f"Extracted Data - Result Code: {result_code}, Amount: {amount}, Phone: {phone_number}, Txn ID: {transaction_id}")
+
+            if result_code == 0:  # Success
+                reward_payment = RewardPayment.objects.filter(
+                    phone_number=phone_number, is_successful=False
+                ).first()
+
+                if reward_payment:
+                    # Update the reward record
+                    reward_payment.is_successful = True
+                    reward_payment.transaction_id = transaction_id
+                    reward_payment.date = now()
+                    reward_payment.reward = "Lucky Box Reward"  # Customize as needed
+                    reward_payment.save()
+                    logger.info(f"Reward payment updated for phone number {phone_number}")
+                else:
+                    # Create a new reward entry
+                    reward_payment = RewardPayment.objects.create(
+                        phone_number=phone_number,
+                        amount=amount,
+                        transaction_id=transaction_id,
+                        is_successful=True,
+                        reward="Lucky Box Reward",
+                        date=now()
+                    )
+                    logger.info(f"New reward payment created for phone number {phone_number}")
+
+                # Return response
+                return JsonResponse({
+                    "status": "Payment processed successfully!",
+                    "reward": reward_payment.reward
+                })
+
+            else:
+                logger.error(f"Payment failed for checkout ID {checkout_request_id} with error: {result_description}")
+                return JsonResponse({"error": f"Payment failed: {result_description}"}, status=400)
 
         except Exception as e:
-            logger.error(f"Error initiating STK Push: {str(e)}")
-            return JsonResponse({"error": "Error initiating STK Push"}, status=500)
+            logger.error(f"Error processing callback: {str(e)}")
+            return JsonResponse({"error": "Invalid callback data"}, status=400)
 
     return JsonResponse({"error": "Invalid request method"}, status=400)
