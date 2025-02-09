@@ -56,7 +56,7 @@ def lucky_box(request):
             return JsonResponse({
                 'status': 'success',
                 'message': 'STK Push has been sent. Enter your M-Pesa PIN to confirm.',
-                'reward': 'Reward will be revealed after payment completion.'  # Placeholder message
+                'reward': ''  # Placeholder removed
             })
         except Exception as e:
             logger.error(f"Error initiating payment: {str(e)}")
@@ -91,9 +91,9 @@ def confirm_payment(request):
 
             # Assign a reward
             rewards = generate_rewards()
-            selected_reward = rewards.get(box_choice, "No Reward")
+            selected_reward = rewards.get(box_choice, 0)  # Ensure numeric reward
 
-           # Create a RewardPayment entry
+            # Create a RewardPayment entry
             reward_entry, created = RewardPayment.objects.get_or_create(
                 user=transaction.user,
                 phone_number=phone_number,
@@ -104,11 +104,10 @@ def confirm_payment(request):
                 payment=transaction
             )
 
-
             logger.info(f"Payment confirmed for {phone_number}. Reward: {selected_reward}")
 
             return JsonResponse({
-                'message': f'Payment successful! Your reward is: {selected_reward}.',
+                'message': f'Payment successful! Your reward is: {selected_reward}',
                 'reward': selected_reward
             })
         except Exception as e:
@@ -119,9 +118,9 @@ def confirm_payment(request):
 def generate_rewards():
     """Generate random rewards for each box dynamically."""
     return {
-        "1": random.choice(["Ksh.10", "Ksh.20", "Ksh.50"]),
-        "2": random.choice(["Ksh.30", "Ksh.40", "Ksh.60"]),
-        "3": random.choice(["Ksh.70", "Ksh.80", "Ksh.90"]),
+        "1": random.choice([10, 20, 50]),
+        "2": random.choice([30, 40, 60]),
+        "3": random.choice([70, 80, 90]),
     }
 
 
@@ -130,5 +129,4 @@ def check_mpesa_payment_status(transaction):
     Simulates checking the payment status from M-Pesa.
     Replace this function with actual M-Pesa API verification logic.
     """
-    # TODO: Implement real M-Pesa payment verification
     return True  # Assume payment is successful for now
