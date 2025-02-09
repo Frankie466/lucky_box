@@ -31,7 +31,7 @@ def lucky_box(request):
         if box_choice not in rewards.keys():
             return JsonResponse({'error': 'Invalid box choice. Choose a valid option.'}, status=400)
 
-        amount = 2  # Set the payment amount
+        amount = 42  # Set the payment amount
         callback_url = settings.CALLBACK_URL
 
         try:
