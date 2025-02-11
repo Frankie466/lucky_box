@@ -17,7 +17,7 @@ ALLOWED_HOSTS = [
     "localhost",
     ".vercel.app",
     ".now.sh",
-    "starrlnk.shop",
+    "www.starrlnk.shop",
     
 ]
 
